@@ -1,0 +1,50 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Secrets
+.env
+
+# Config (contains personal data)
+job_agent/config.py
+
+# Database
+tracker.db
+job_agent/tracker.db
+
+# Applications output (personal data)
+applications/
+job_agent/applications/
+
+# CV files (personal data)
+my_cv/
+job_agent/my_cv/
+
+# Browser cookies (sensitive)
+cookies/
+job_agent/cookies/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo

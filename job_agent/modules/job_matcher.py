@@ -46,7 +46,7 @@ Score how well this job matches the candidate profile on a scale of 1-10.
 - 1-2: Not a match
 
 Respond ONLY with a JSON object like:
-{{"score": 8, "reason": "Strong UX role at a product company, Figma required"}}
+{{"score": 8, "reason": "Strong match for your profile, skills align well"}}
 """
 
             response = self.client.messages.create(
@@ -71,8 +71,8 @@ Respond ONLY with a JSON object like:
         text = (job["title"] + " " + job.get("description", "")).lower()
         score = 0
 
-        high_match = ["ux designer", "ui designer", "ux/ui", "product designer", "interaction designer"]
-        medium_match = ["designer", "figma", "user experience", "user interface", "wireframe"]
+        high_match = [q.lower() for q in getattr(self.config, 'SEARCH_QUERIES', [])]
+        medium_match = []
 
         for kw in high_match:
             if kw in text:

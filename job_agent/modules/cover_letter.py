@@ -16,16 +16,17 @@ class CoverLetterGenerator:
         self.client = anthropic.Anthropic(api_key=config.ANTHROPIC_API_KEY)
 
     def generate(self, job: dict, cv_path: Path, lang: str = "no") -> Path:
+        from job_agent.modules.docx_utils import markdown_to_docx
         output_dir = cv_path.parent
-        output_path = output_dir / f"CoverLetter_{self._safe_name(job)}.txt"
+        output_path = output_dir / f"CoverLetter_{self._safe_name(job)}.docx"
 
         try:
             letter = self._generate_letter(job, lang)
-            output_path.write_text(letter, encoding="utf-8")
+            markdown_to_docx(letter, str(output_path))
             log.info(f"  Cover letter generated ({lang}): {output_path.name}")
         except Exception as e:
             log.warning(f"  Cover letter generation failed: {e}")
-            output_path.write_text(self._fallback_letter(job), encoding="utf-8")
+            markdown_to_docx(self._fallback_letter(job), str(output_path))
 
         return output_path
 
@@ -89,7 +90,7 @@ Write only the letter body (no subject line needed). {greeting}
 Dear Hiring Team,
 
 I am excited to apply for the {job['title']} position at {job['company']}.
-With my background in design, I believe I can contribute meaningfully to your team.
+With my background and experience, I believe I can contribute meaningfully to your team.
 
 [Please personalise this cover letter before submitting]
 

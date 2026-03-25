@@ -27,7 +27,7 @@ def search_jobs(queries: list[str]) -> list[dict]:
     Search NAV.no (Arbeidsplassen) for job listings.
 
     Args:
-        queries: List of search terms, e.g. ["UX designer", "product designer"]
+        queries: List of search terms, e.g. ["Software Engineer", "Project Manager"]
 
     Returns:
         List of job dicts with keys: id, source, title, company, location, url, description

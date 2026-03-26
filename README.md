@@ -6,20 +6,30 @@ Automatically finds jobs on Norwegian job boards, scores them against your profi
 
 1. **Scrapes** FINN.no and NAV.no once a day (configurable)
 2. **Scores** each job using Claude AI against your professional profile
-3. **Detects language** (Norwegian/English) and picks the right CV
-4. **Generates** a tailored cover letter per job in the matching language
-5. **Saves** CV + cover letter + job description to a local folder
-6. **Emails** you a summary of all prepared applications
+3. **Smart Job Caching**: Remembers previously evaluated jobs across runs to heavily save on API credits
+4. **Detects language** (Norwegian/English) and picks the right CV context
+5. **Generates** a tailored cover letter and perfectly formatted Word document (`.docx`) CV per job
+6. **Saves** documents beautifully formatted with native Microsoft Word styling
+7. **Emails** you a summary of all prepared applications
 
 ## Quick Start
+You can run this project locally to fully automate your job application pipeline on autopilot.
 
-### 1. Install
+### 1. Install via Git
 ```bash
-cd job_agent_package
+git clone https://github.com/omaraltaf/job-agent.git
+cd job-agent
+
+# Create a virtual environment (recommended)
+python3 -m venv .venv
+source .venv/bin/activate
+
+# Install the agent alongside its dependencies
 pip install -e .
 ```
 
 ### 2. Add your CVs
+Place your master CVs in the folder structure below. The agent supports parsing PDF or DOCX:
 ```
 job_agent/my_cv/
   master_cv.pdf       ← Norwegian CV
@@ -36,78 +46,37 @@ Edit `.env` with your API keys:
 
 ### 4. Configure your profile
 ```bash
+# Set up your generic profile configuration
 cp job_agent/config.example.py job_agent/config.py
 ```
 Edit `job_agent/config.py` with:
 - Your name, email, phone, LinkedIn, portfolio
-- Your professional profile (skills, experience, ideal job)
-- Your background summary (used for cover letters)
-- Job search queries and filters
-- Schedule time, notification preferences
+- Your general professional profile (skills, experience, ideal job)
+- Your background summary (used by Claude for cover letters)
+- Search queries and exclude filtering
 
-### 5. Run
+### 5. Run the Agent
 ```bash
 job-agent
 ```
-Or: `python -m job_agent.agent`
+Or run the python module directly:
+```bash
+python -m job_agent.agent
+```
 
-The agent runs immediately on start, then again daily at the configured time (default 08:00).
+The agent runs immediately on start, pulling new jobs, and then repeats its execution cycle daily at the configured time (default 08:00).
 
 ## Output
 
-Each matched job creates a folder:
+Each matched job generates a polished, submission-ready set of Microsoft Word documents inside an easily identifiable target folder:
 ```
 job_agent/applications/
-  2026-03-24_Talentech_Product_Designer/
-    CV_Talentech.pdf
-    CoverLetter_Talentech.txt
+  2026-03-26_Talentech_Senior_Developer/
+    CV_Talentech.docx
+    CoverLetter_Talentech.docx
     job_description.txt
-    cv_tailoring_notes.txt    (for DOCX CVs)
 ```
-
-## Configuration
-
-All settings are in `job_agent/config.py`:
-
-| Setting | Description |
-|---|---|
-| `PROFESSIONAL_PROFILE` | Your skills/experience — used by AI to score jobs |
-| `BACKGROUND_SUMMARY` | Your background — used by AI to write cover letters |
-| `SEARCH_QUERIES` | Job titles to search for |
-| `EXCLUDE_KEYWORDS` | Skip jobs containing these words |
-| `MIN_MATCH_SCORE` | Minimum AI score (1-10) to generate documents |
-| `MAX_APPLICATIONS_PER_RUN` | Cap per run |
-| `AI_MODEL` | Claude model to use |
-| `SCHEDULE_TIME` | Daily run time (24h format) |
-| `CV_PATH_NO` / `CV_PATH_EN` | Paths to Norwegian/English CVs |
-| `NOTIFICATION_METHOD` | `"email"`, `"slack"`, or `"desktop"` |
 
 ## Cost
 
-Approximately $2-5/month in Anthropic API credits.
-
-## Project Structure
-
-```
-job_agent_package/
-├── pyproject.toml              ← Package definition
-├── .env                        ← Secrets (not in Git)
-├── .env.example                ← Secrets template
-├── job_agent/
-│   ├── __init__.py
-│   ├── agent.py                ← Entry point
-│   ├── config.py               ← Your settings (not in Git)
-│   ├── config.example.py       ← Settings template
-│   ├── scrapers/
-│   │   ├── finn_scraper.py
-│   │   └── nav_scraper.py
-│   ├── modules/
-│   │   ├── job_matcher.py      ← AI scoring
-│   │   ├── cv_adapter.py       ← Language detection + CV selection
-│   │   ├── cover_letter.py     ← Cover letter generation
-│   │   ├── applicator.py       ← Browser automation (future use)
-│   │   ├── tracker.py          ← SQLite tracking
-│   │   └── notifier.py         ← Email notifications
-│   ├── my_cv/                  ← Your CVs (not in Git)
-│   └── applications/           ← Generated documents (not in Git)
-```
+Due to the internal Database caching and precision MCP pipelines, the agent operates incredibly cheaply, only using approximately $2-5/month in Anthropic API credits when processing hundreds of highly relevant roles.
